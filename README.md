@@ -7,7 +7,7 @@ O **Promptly** é um gerenciador de snippets e comandos técnicos focado em prod
 - **Backend:** Python 3.11, FastAPI, SQLAlchemy, Pydantic
 - **Banco de Dados:** PostgreSQL 15
 - **Orquestração:** Docker & Docker Compose
-- **Client (Linux):** Bash, Rofi, JQ, Xclip
+- **Client (Linux Host):** Bash, Rofi, JQ, Xclip
 
 ## 🏗️ Arquitetura e Resiliência DevOps
 
@@ -22,9 +22,12 @@ O projeto foi desenhado seguindo boas práticas de infraestrutura:
 
 Se você quer testar o projeto na sua máquina local, siga os passos abaixo.
 
-### 1. Pré-requisitos
-- Docker e Docker Compose instalados.
-- Sistema Operacional Linux (Ubuntu/Debian recomendado) para o Client global.
+### 1. Pré-requisitos e Instalação Local (Host)
+A API roda dentro do Docker, mas a interface do Rofi precisa rodar diretamente no seu sistema operacional (Ubuntu/Debian) para capturar o teclado. No seu terminal local, instale as ferramentas necessárias:
+
+```bash
+sudo apt update && sudo apt install rofi xclip jq curl -y
+```
 
 ### 2. Clonar e Subir a Infraestrutura
 ```bash
@@ -43,20 +46,17 @@ docker exec -it promptly_api python -m app.seed
 ```
 
 ### 4. Configurar o Atalho Global (Client)
-A API estará rodando dentro do Docker, mas você pode chamá-la de qualquer lugar do sistema operacional.
-
-Instale as dependências locais:
+Dê permissão de execução para o script local:
 ```bash
-sudo apt update && sudo apt install rofi xclip jq -y
 chmod +x client/promptly.sh
 ```
 
-**Configuração do Atalho no Ubuntu:**
+**Configuração do Atalho no Ubuntu (Evitando problemas de foco):**
 1. Vá em **Configurações -> Teclado -> Atalhos de Teclado -> Atalhos Personalizados**.
 2. Clique em `+` e preencha:
    - **Nome:** `Promptly`
-   - **Comando:** `/caminho/completo/para/promptly/client/promptly.sh`
-   - **Atalho:** Escolha uma combinação (Recomendado: `Super + Z`).
+   - **Comando:** `env GDK_BACKEND=x11 /caminho/completo/para/promptly/client/promptly.sh`
+   - **Atalho:** Escolha uma combinação que não conflite com o sistema (Alt + Space costuma dar conflito no GNOME, por isso recomendamos **Super + Z**).
 
 ---
 
