@@ -1,4 +1,4 @@
 __pycache__/
 *.py[cod]
-api/app/promptly.db
 .env
+api/app/promptly.db

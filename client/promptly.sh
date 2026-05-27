@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Use o IP interno se o localhost falhar, mas localhost costuma funcionar
-API_URL="http://localhost:8000/commands/"
+API_URL="${PROMPTLY_API_URL:-http://localhost:8000/commands/}"
 
 # 1. Busca os nomes e filtra com Rofi (Double click ou Enter funciona)
 selected_name=$(curl -s "$API_URL" | jq -r '.[].name' | rofi -dmenu -i -p "Promptly Search:" -normal-window)

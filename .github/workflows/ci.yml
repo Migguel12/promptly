@@ -1,0 +1,49 @@
+name: Promptly CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-format:
+    name: Lint Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Linting Tools
+        run: |
+          pip install flake8
+
+      - name: Run Flake8 Check
+        run: |
+          # O build vai falhar se houver erros gritantes de sintaxe Python (E9, F63, F7, F82)
+          flake8 ./api --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Avisos estéticos geram apenas alertas sem quebrar o build
+          flake8 ./api --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  build-docker:
+    name: Test Docker Build
+    needs: lint-and-format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Image (Smoke Test)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          push: false # Apenas testa se o build funciona, sem buildar para nenhum registro ainda
+          tags: promptly-api:test
